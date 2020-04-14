@@ -4,22 +4,43 @@ block vars
   - ctrl.navtop.className = "navbar-light";
 block head
 block body
-  .w-100.h-75.bg-light: .vertical-center: .text-center.w-100
-    h1 陳昇瑋博士
-    .text-muted 1976 - 2020
+  .w-100.h-75(style="background:#999 url(/assets/img/hero.jpg) left center no-repeat"): .vertical-center: .text-center.w-100
+    .row.no-gutters
+      .col-md
+      .col-md.text-left
+        div 台灣人工智慧學校執行長
+        h1.display-3(style="font-family:serif;font-weight:900"): b 陳昇瑋博士
+        .text-muted 1976 - 2020
+        +scope("hero-view")
+          each i in [1,2]
+            .border.border-secondary.p-4.rounded.shadow-sm.ld.ld-float-ltr-in.mt-4(
+            class=(i==1?"d-none":""),ld="condolence",data-id=i,
+            style="width:90%;max-width:400px;display:inline-block")
+              .text-lg: b 弔唁
+              hr
+              div(ld="content") 始轉單定表看事直多快投中明就大。目健整的都稱步是來兒復卻記景。月務燈史木像兩，學何員式公達來臺仍一手美歷畫國無是修。
+              .mt-3.text-right(ld="source") 中研院資訊所
 
-  .w-100.bg-white
-    .w-768.mx-auto.rwd.typeset.heading-contrast.py-4
-      h2 線上告別式資訊
-      hr
-      ul
-        li 時間: 2020 04/21 09:00
-        li 地點: #[a(href="https://swchen.online/") swchen.online]
+  .w-768.mx-auto.rwd.typeset.heading-contrast.py-4.border.rounded.shadow.p-4.position-relative.bg-white(style="margin-top:-2em")
+    h2 線上告別式資訊
+    hr
+    .mb-4
+      div 時間
+      div 2020 04/21 09:00
+    div
+      div 地點
+      div #[a(href="https://swchen.online/") swchen.online]
 
   .w-100.bg-white.p-4
     .w-768.mx-auto.rwd.typeset.heading-contrast.py-4
       h2#experience 生平記事
-      p 下略
+      .pb-3: hr
+      .timeline
+        .list
+          each i in [1,2,3,4]
+            .item
+              .title #{1986 + i * i} / #[span.text-sm 提雖臺水學常]
+              p 品通代，始轉單定表看事直多快投中明就大。目健整的都稱步是來兒復卻記景。月務燈史木像兩，學何員式公達來臺仍一手美歷畫國無是修，於高樣傳點教前血！念三了了天平上，少提雖臺水學常麼他縣時交車明朋生道候舞識，想時人果明將去電一家常等理強日點眼有議子那速。
   +scope("form").w-100.bg-white
     .w-768.mx-auto.rwd.typeset.heading-contrast.py-4
       h2.mb-4#condolences 線上弔唁
@@ -60,12 +81,12 @@ block body
 block script
   script: :lsc
     ldc.register \main, <[ldcvmgr auth loader notify]>, ({ldcvmgr, auth, loader, notify}) ->
-      lc = {}
+      lc = {hero-id: 1}
       auth.get!
         .then (authinfo) ->
           lc.authinfo = authinfo
           ld$.fetch.{}headers['X-CSRF-Token'] = authinfo.csrfToken
-          if authinfo.{}user.key => ld$.fetch '/d/condolence', {method: \GET}, {type: \json}
+          if authinfo.{}user.key => ld$.fetch '/d/me/condolence', {method: \GET}, {type: \json}
           else Promise.resolve([])
         .then ->
           data = if it => it.0 or null
@@ -89,5 +110,26 @@ block script
                 .then -> notify.send \success, "您的弔唁已送出。"
                 .catch -> notify.send \danger, "送出失敗，再試一次？"
 
+      /*hero-view = new ldView do
+        root: "[ld-scope=hero-view]"
+        handler:
+          condolence: ({node}) ->
+            data = lc.[]hero-list[lc.hero-idx or 0] or null
+            id = +node.getAttribute(\data-id)
+            node.classList.toggle(\d-none, (id == lc.hero-id) or !data)
+          content: ({node}) ->
+            data = lc.[]hero-list[lc.hero-idx or 0] or {}
+            node.innerText = data.content
+          source: ({node}) ->
+            data = lc.[]hero-list[lc.hero-idx or 0] or {}
+            node.innerText = data.source
+      */
+      ld$.fetch '/d/condolence', {method: \GET}, {type: \json, params: {offset: 0}}
+        .then -> lc.hero-list = (lc.hero-list or []) ++ it
+      /*setInterval (->
+        lc.hero-id = 3 - lc.hero-id
+        lc.hero-idx = ((lc.hero-idx or 0) + 1) % ( lc.[]condolence-list.length or 1)
+        hero-view.render!
+      ), 5000*/
       smoothScroll!
     ldc.app \main

@@ -1,0 +1,58 @@
+doctype html
+html
+  head
+    include /../../static/assets/lib/ldui/pug/ldui.pug
+    meta(charset="utf-8")
+    link(href="https://fonts.googleapis.com/css?family=Noto+Sans+TC:300,400,500,700|Roboto:300,500&display=swap",rel="stylesheet")
+    +css("/assets/lib/bootstrap/4.3.1/css/bootstrap.min.css")
+    +css("/assets/lib/ldui/ldui.min.css")
+    +css("/css/index.css")
+    style(type="text/css"): :stylus
+      body { background: #ccc!important }
+  body
+    #sample.card.shadow-lg.position-absolute.border-0.d-none(style="width:30%"): .card-body
+      .font-weight-bold.mb-4.text-lg(ld="name")
+      p(ld="description")
+    #container
+    +script("/js/pack/vendor.min.js")
+    +script("/js/pack/base.min.js")
+    script: :lsc
+      lc = {zidx: 1, pidx: 0}
+      sample = ld$.find \#sample, 0
+      container = ld$.find \#container, 0
+      ani-in = "ld-float-btt-in"
+      name = "中研院資訊所"
+      description = "約不女在出車如廠同親然過家究座一，界寫連樂力，好裡背兒分：聲亞也原少落子，得關非說界不得……學先聲病我的縣的有職這提會加花有排經老金打男仍方愛覺加年毛兩加，動媽變。"
+      cards = []
+      tbr = []
+      pos = [[10,10], [60,10], [65,55], [10,55], [25,35], [46,45],[42,10]]
+      handler = (t) ->
+        if !cards.length or (t > (cards[* - 1] or {}).time + 2000) =>
+          cards.push n = sample.cloneNode true
+          n.time = t
+          n.life = 10000 + Math.random! * 10000
+          ld$.find(n, '[ld=name]', 0).innerText = name
+          ld$.find(n, '[ld=description]', 0).innerText = description
+          n.classList.add \ld, ani-in
+          #n.style.left = "#{Math.random! * 70}%"
+          #n.style.top = "#{Math.random! * 60}%"
+          n.style.left = "#{Math.random! * 20 - 10 + pos[lc.pidx][0]}%"
+          n.style.top = "#{Math.random! * 20 - 10 + pos[lc.pidx][1]}%"
+          lc.pidx = (lc.pidx + 1) % pos.length
+          n.style.zIndex = (lc.zidx++)
+          n.classList.remove \d-none
+          container.appendChild n
+        for i from cards.length - 1 to 0 by -1 =>
+          c = cards[i]
+          if c.time + c.life > t => continue
+          c.classList.add \ld-fade-out
+          c.classList.remove ani-in
+          cards.splice i, 1
+          tbr.push c
+        for i from tbr.length - 1 to 0 by -1 =>
+          c = tbr[i]
+          if c.time + c.life + 1000 > t => continue
+          c.parentNode.removeChild c
+          tbr.splice i, 1
+        requestAnimationFrame (-> handler it)
+      requestAnimationFrame (-> handler it)

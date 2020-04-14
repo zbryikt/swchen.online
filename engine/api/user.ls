@@ -159,19 +159,17 @@ api.post \/me/config/, (req, res) ->
     .then -> res.send!
     .catch aux.error-handler res
 
-api.get \/condolence, (req, res) ->
+api.get \/me/condolence, (req, res) ->
   if !(req.user and req.user.key) => return res.send({})
   io.query "select * from condolence where owner = $1", [req.user.key]
     .then (r={}) -> ((res.send r.rows or []).0 or {})
     .catch aux.error-handler res
 
 api.post \/condolence, (req, res) ->
-  console.log req.body
   try
     {content, source, contact, publish} = req.body
   catch e
     return aux.r400 res
-  console.log content, source, contact, publish
   if !(content and source and contact and publish) => return aux.r400 res
   publish = (publish == "1")
   (
@@ -183,7 +181,7 @@ api.post \/condolence, (req, res) ->
         io.query """
         update condolence
         set (content,source,contact,publish,verified)
-        = ($1,$2,$3,$4,$5,false) where owner = $1
+        = ($2,$3,$4,$5,false) where owner = $1
         """, [req.user.key, content, source, contact, publish]
       else
         io.query """
@@ -192,6 +190,12 @@ api.post \/condolence, (req, res) ->
         values ($1,$2,$3,$4,$5,false)
         """, [(if req.user => req.user.key else null), content, source, contact, publish]
     .then -> res.send {}
+    .catch aux.error-handler res
+
+api.get \/condolence, (req, res) ->
+  offset = req.params.offset or 0
+  io.query """ select * from condolence where publish = true offset $1 """, [offset]
+    .then (r = {}) -> res.send(r.rows or [])
     .catch aux.error-handler res
 
 api.get \/condolence/admin, aux.authorized-api, (req, res) ->
