@@ -69,6 +69,9 @@ base = do
   signed: (req, res, next) ->
     if !(req.user and req.user.key) => next(new lderror(1000)) else next!
 
+  authorized-api: (req, res, next) ->
+    if !(req.user and req.user.staff == 1) => next(new lderror(1012)) else next!
+
   authorized: (cb) -> (req, res) ->
     if !(req.user and req.user.staff == 1) =>
       return res.status(404).render('err/404.pug', {url: req.originalUrl})

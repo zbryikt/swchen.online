@@ -166,10 +166,12 @@ api.get \/condolence, (req, res) ->
     .catch aux.error-handler res
 
 api.post \/condolence, (req, res) ->
+  console.log req.body
   try
     {content, source, contact, publish} = req.body
   catch e
     return aux.r400 res
+  console.log content, source, contact, publish
   if !(content and source and contact and publish) => return aux.r400 res
   publish = (publish == "1")
   (
@@ -189,5 +191,18 @@ api.post \/condolence, (req, res) ->
         (owner,content,source,contact,publish,verified)
         values ($1,$2,$3,$4,$5,false)
         """, [(if req.user => req.user.key else null), content, source, contact, publish]
-    .then -> res.send!
+    .then -> res.send {}
     .catch aux.error-handler res
+
+api.get \/condolence/admin, aux.authorized-api, (req, res) ->
+  {offset,source,verified} = req.params
+  io.query """
+  select * from condolence
+  where source ~ $1 and verified = $2
+  offset $3
+  """, [source, verified, offset]
+    .then (r = {}) -> res.send(r.rows or [])
+    .catch aux.error-handler res
+
+app.get \/condolence/admin, aux.authorized (req, res) ->
+  res.render 'admin/review.pug'

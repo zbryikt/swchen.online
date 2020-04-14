@@ -24,54 +24,70 @@ block body
     .w-768.mx-auto.rwd.typeset.heading-contrast.py-4
       h2.mb-4#condolences 線上弔唁
       .form-group
-        label 想對昇瑋說的話
-        textarea.form-control(name="comment",rows="5")
+        .text-lg.mb-2: b 您的弔唁
+        textarea.form-control(name="content",rows="5")
 
       .form-group
-        label: b 單位 / 姓名
+        .mb-2
+          label.mb-0: b 單位 / 姓名
+          .text-muted 若有重覆單位或姓名的弔唁，我們僅會留下其中一筆。
         input.form-control(name="source")
 
       .form-group
-        label: b 聯絡方式
+        .mb-2
+          label.mb-0: b 聯絡方式
+          .text-muted 手機、email 等聯絡方式，格式不拘。此資訊僅對家屬公開。
         input.form-control(name="contact")
 
       .form-group
-        label.mb-0: b 公開
-        .text-muted 若選擇「僅提供給家屬」，則您的弔唁將僅提供給家屬，不會被公開展示；若選擇「公開」，則實體 / 線上追思會以及此網站將會輪播您的弔唁。
+        .mb-2
+          label.mb-0: b 公開
+          .text-muted 若選擇「僅提供給家屬」，則您的弔唁將僅提供給家屬，不會被公開展示；若選擇「公開」，則實體 / 線上追思會以及此網站將會輪播您的弔唁。
         select.form-control(name="publish")
           option(value="0") 僅提供給家屬
           option(value="1") 於追思會及此網站公開
 
-      .d-flex
-        .btn.btn-outline-dark(ld="submit") 送出
-      .text-muted.mt-4
-        div 若您登入後再送出，弔唁將會存在您的帳號下。若需要調整弔唁，可以使用該帳號登入調整。
-        div 弔唁將會經過管理員審核，避免有無關內容。修改過的弔唁會再重新經過審核。
+      .d-flex.align-items-center
+        .btn.btn-outline-secondary.rounded-pill.px-4.disabled(ld="submit") 送出訊息 #[i.i-check]
+        .ml-2.text-danger 您尚有未填入的欄位
+      .d-flex.text-muted.mt-4
+        div 註：
+        div
+          div 若您登入後再送出，弔唁將會存在您的帳號下。若需要調整弔唁，可以使用該帳號登入調整。
+          div 弔唁將會經過管理員審核，以排除無關內容。若您修改過弔唁，您的弔唁將會重新經過審核。
 
 
 block script
   script: :lsc
     ldc.register \main, <[ldcvmgr auth loader notify]>, ({ldcvmgr, auth, loader, notify}) ->
+      lc = {}
       auth.get!
-        .then (auth-info) ->
-          ld$.fetch '/d/condolence', {method: \GET}, {type: \json}
-            .then ->
-              
-          ld$.fetch.{}headers['X-CSRF-Token'] = auth-info.csrfToken
-
+        .then (authinfo) ->
+          lc.authinfo = authinfo
+          ld$.fetch.{}headers['X-CSRF-Token'] = authinfo.csrfToken
+          if authinfo.{}user.key => ld$.fetch '/d/condolence', {method: \GET}, {type: \json}
+          else Promise.resolve([])
+        .then ->
+          data = if it => it.0 or null
+          data.publish = if data.publish => \1 else \0
           form = new ldForm do
             root: "[ld-scope=form]"
             submit: "[ld=submit]"
+            values: data{content, contact, source, publish}
+            afterCheck: (s, f) ->
+              s.all = if (<[content source contact]>.reduce(((a, b) -> a and s[b] == 0), true)) => 0 else 2
+          if data => form.checkAll!
           view = new ldView do
             root: "[ld-scope=form]"
             action: click: submit: ({node}) ->
+              if node.classList.contains \disabled => return
               payload = form.values!
-              console.log payload
               loader.on!
-              ld$.fetch '/d/condolence', {method: \POST}, {json: payload, type: \json}
+              debounce 1000
+                .then -> ld$.fetch '/d/condolence', {method: \POST}, {json: payload, type: \json}
                 .finally -> loader.off!
                 .then -> notify.send \success, "您的弔唁已送出。"
-                .catch -> notify.send \error, "送出失敗，再試一次？"
+                .catch -> notify.send \danger, "送出失敗，再試一次？"
 
       smoothScroll!
     ldc.app \main

@@ -49,7 +49,7 @@ create type state as enum ('active','pending','deleted','canceled','suspended','
 
 create table if not exists condolence (
   key serial primary key,
-  owner int references users(key) on delete cascade,
+  owner int,
   content text not null constraint contentlength check (char_length(content) <= 16384),
   source text not null constraint sourcelength check (char_length(source) <= 200),
   contact text not null constraint contactlength check (char_length(contact) <= 200),
