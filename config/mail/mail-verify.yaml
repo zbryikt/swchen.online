@@ -1,0 +1,11 @@
+from: '"swchen.online Support" <no-reply@swchen.online>'
+subject: Email Verification from swchen.online
+content: |
+  You receive this mail because there is an email verification request for the account using this email in swchen.online. If you didn't sign up xinmeti.co, please just ignore this mail, or reply directly to ask removing email.
+
+  To verify your email, click following link:
+
+  [https://swchen.online/me/mail/verify/#{token}](https://swchen.online/me/mail/verify/#{token})
+
+  Thanks,
+  swchen.online team

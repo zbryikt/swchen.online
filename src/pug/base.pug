@@ -1,0 +1,40 @@
+//- module
+doctype html
+include /../../static/assets/lib/ldui/pug/ldui.pug
+-
+  var ctrl = {
+    cover: {authpanel: true},
+    navtop: {placeholder: true, shown: true},
+    foot: {shown: true},
+    carbon: {}
+  }
+- var vars = {root: ""}
+block vars
+html
+  head
+    meta(charset="utf-8")
+    link(href="https://fonts.googleapis.com/css?family=Noto+Sans+TC:300,400,500,700|Roboto:300,500&display=swap",rel="stylesheet")
+    +css("/assets/lib/bootstrap/4.3.1/css/bootstrap.min.css")
+    +css("/assets/lib/ldui/ldui.min.css")
+    +css("/css/index.css")
+    block head
+  body.ld-over-full-inverse(data-spy=(ctrl.scrollspy ? "scroll" : false),
+  data-target=(ctrl.scrollspy ? ctrl.scrollspy : false))
+    .ld.ld-spin.ld-spinner
+
+    +script("/js/pack/base.min.js")
+    include /modules/navtop.pug
+    .ldNotify
+    block body
+    //-
+      if ctrl.cover.authpanel
+        include /modules/cover/authpanel.pug
+    if ctrl.foot.shown
+      include /modules/foot.pug
+    +script("/js/pack/vendor.min.js")
+    //-
+      +script("/assets/lib/flatpickr/flatpickr.min.js")
+      +script("/assets/xfl/xfl.js")
+      +script("/js/pack/core.min.js")
+
+    block script

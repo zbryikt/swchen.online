@@ -1,0 +1,58 @@
+extends /base.pug
+block vars
+  - ctrl.navtop.placeholder = false;
+  - ctrl.navtop.className = "navbar-light";
+block head
+block body
+  .w-100.h-75.bg-light: .vertical-center: .text-center.w-100
+    h1 陳昇瑋博士
+    .text-muted 1976 - 2020
+
+  .w-100.bg-white
+    .w-768.mx-auto.rwd.typeset.heading-contrast.py-4
+      h2 線上告別式資訊
+      hr
+      ul
+        li 時間: 2020 04/21 09:00
+        li 地點: #[a(href="https://swchen.online/") swchen.online]
+
+  .w-100.bg-white.p-4
+    .w-768.mx-auto.rwd.typeset.heading-contrast.py-4
+      h2#experience 生平記事
+      p 下略
+  +scope("form").w-100.bg-white
+    .w-768.mx-auto.rwd.typeset.heading-contrast.py-4
+      h2.mb-4#condolences 線上弔唁
+      .form-group
+        label 想對昇瑋說的話
+        textarea.form-control(name="comment",rows="5")
+
+      .form-group
+        label: b 單位 / 姓名
+        input.form-control(name="source")
+
+      .form-group
+        label: b 聯絡方式
+        input.form-control(name="contact")
+
+      .form-group
+        label.mb-0: b 公開
+        .text-muted 若選擇「僅提供給家屬」，則您的弔唁將僅提供給家屬，不會被公開展示；若選擇「公開」，則實體 / 線上追思會以及此網站將會輪播您的弔唁。
+        select.form-control
+          option(value="0") 僅提供給家屬
+          option(value="1") 於追思會及此網站公開
+
+      .d-flex
+        .btn.btn-outline-dark(ld="submit") 送出
+      .text-muted.mt-4
+        div 若您登入後再送出，弔唁將會存在您的帳號下。若需要調整弔唁，可以使用該帳號登入調整。
+        div 弔唁將會經過管理員審核，避免有無關內容。
+
+
+block script
+  script: :lsc
+    form = new ldForm do
+      root: "[ld-scope=form]"
+      submit: "[ld=submit]"
+    smoothScroll!
+
