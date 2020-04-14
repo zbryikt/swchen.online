@@ -38,7 +38,7 @@ block body
       .form-group
         label.mb-0: b 公開
         .text-muted 若選擇「僅提供給家屬」，則您的弔唁將僅提供給家屬，不會被公開展示；若選擇「公開」，則實體 / 線上追思會以及此網站將會輪播您的弔唁。
-        select.form-control
+        select.form-control(name="publish")
           option(value="0") 僅提供給家屬
           option(value="1") 於追思會及此網站公開
 
@@ -46,13 +46,32 @@ block body
         .btn.btn-outline-dark(ld="submit") 送出
       .text-muted.mt-4
         div 若您登入後再送出，弔唁將會存在您的帳號下。若需要調整弔唁，可以使用該帳號登入調整。
-        div 弔唁將會經過管理員審核，避免有無關內容。
+        div 弔唁將會經過管理員審核，避免有無關內容。修改過的弔唁會再重新經過審核。
 
 
 block script
   script: :lsc
-    form = new ldForm do
-      root: "[ld-scope=form]"
-      submit: "[ld=submit]"
-    smoothScroll!
+    ldc.register \main, <[ldcvmgr auth loader notify]>, ({ldcvmgr, auth, loader, notify}) ->
+      auth.get!
+        .then (auth-info) ->
+          ld$.fetch '/d/condolence', {method: \GET}, {type: \json}
+            .then ->
+              
+          ld$.fetch.{}headers['X-CSRF-Token'] = auth-info.csrfToken
 
+          form = new ldForm do
+            root: "[ld-scope=form]"
+            submit: "[ld=submit]"
+          view = new ldView do
+            root: "[ld-scope=form]"
+            action: click: submit: ({node}) ->
+              payload = form.values!
+              console.log payload
+              loader.on!
+              ld$.fetch '/d/condolence', {method: \POST}, {json: payload, type: \json}
+                .finally -> loader.off!
+                .then -> notify.send \success, "您的弔唁已送出。"
+                .catch -> notify.send \error, "送出失敗，再試一次？"
+
+      smoothScroll!
+    ldc.app \main

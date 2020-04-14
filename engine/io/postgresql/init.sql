@@ -14,7 +14,7 @@ create table if not exists users (
   password text constraint pwlen check (char_length(password) <= 100),
   usepasswd boolean,
   verified jsonb,
-  displayname text, constraint displaynamelength check (char_length(displayname) <= 100),
+  displayname text constraint displaynamelength check (char_length(displayname) <= 100),
   description text,
   createdtime timestamp,
   lastactive timestamp,
@@ -49,9 +49,11 @@ create type state as enum ('active','pending','deleted','canceled','suspended','
 
 create table if not exists condolence (
   key serial primary key,
-  content text,
-  source text,
-  contact text,
-  publish bool,
+  owner int references users(key) on delete cascade,
+  content text not null constraint contentlength check (char_length(content) <= 16384),
+  source text not null constraint sourcelength check (char_length(source) <= 200),
+  contact text not null constraint contactlength check (char_length(contact) <= 200),
+  publish bool not null default true,
+  verified bool not null default false,
   createdtime timestamp default now()
 );

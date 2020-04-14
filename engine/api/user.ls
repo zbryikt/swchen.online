@@ -159,26 +159,35 @@ api.post \/me/config/, (req, res) ->
     .then -> res.send!
     .catch aux.error-handler res
 
+api.get \/condolence, (req, res) ->
+  if !(req.user and req.user.key) => return res.send({})
+  io.query "select * from condolence where owner = $1", [req.user.key]
+    .then (r={}) -> ((res.send r.rows or []).0 or {})
+    .catch aux.error-handler res
+
 api.post \/condolence, (req, res) ->
   try
     {content, source, contact, publish} = req.body
   catch e
     return aux.r400 res
   if !(content and source and contact and publish) => return aux.r400 res
-  io.query """
-  insert into condolence (content,source,contact,publish) values ($1,$2,$3,$4)
-  """, [content, source, contact, publish]
-    .then -> res.send!
-    .catch aux.error-handler res
-
-api.put \/condolence, (req, res) ->
-  try
-    {content, source, contact, publish} = req.body
-  catch e
-    return aux.r400 res
-  if !(content and source and contact and publish) => return aux.r400 res
-  io.query """
-  update condolence set (content,source,contact,publish) = ($1,$2,$3,$4)
-  """, [content, source, contact, publish]
+  publish = (publish == "1")
+  (
+    if req.user and req.user.key => io.query "select key from condolence where owner = $1", [req.user.key]
+    else Promise.resolve({rows: []})
+  )
+    .then (r={}) ->
+      if r.rows.length =>
+        io.query """
+        update condolence
+        set (content,source,contact,publish,verified)
+        = ($1,$2,$3,$4,$5,false) where owner = $1
+        """, [req.user.key, content, source, contact, publish]
+      else
+        io.query """
+        insert into condolence
+        (owner,content,source,contact,publish,verified)
+        values ($1,$2,$3,$4,$5,false)
+        """, [(if req.user => req.user.key else null), content, source, contact, publish]
     .then -> res.send!
     .catch aux.error-handler res

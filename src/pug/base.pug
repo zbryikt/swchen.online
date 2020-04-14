@@ -26,15 +26,11 @@ html
     include /modules/navtop.pug
     .ldNotify
     block body
-    //-
-      if ctrl.cover.authpanel
-        include /modules/cover/authpanel.pug
+    if ctrl.cover.authpanel
+      include /modules/cover/authpanel.pug
     if ctrl.foot.shown
       include /modules/foot.pug
     +script("/js/pack/vendor.min.js")
-    //-
-      +script("/assets/lib/flatpickr/flatpickr.min.js")
-      +script("/assets/xfl/xfl.js")
-      +script("/js/pack/core.min.js")
+    +script("/js/pack/core.min.js")
 
     block script
