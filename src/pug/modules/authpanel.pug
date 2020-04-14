@@ -19,8 +19,8 @@ mixin authpanel
             block
           else
             h3.mb-4.font-weight-bold(style="line-height:1em")
-              | 登入您的#[br]Battle Dash 帳號
-            p.text-sm 公民科技獎助金提案系統由 Battle Dash 提供。登入 Battle Dash 以建立提案。
+              | 登入
+            p.text-sm 您不需登入也可以線上弔唁。登入帳號以進行個人弔唁維護與管理。
 
       //-.position-absolute.text-sm(style="bottom:20px;right:20px")
         span Service Provided by Battle Dash
@@ -37,7 +37,7 @@ mixin authpanel
             input.form-control.form-control-sm(name="email",placeholder="電子郵件即您的帳號名稱")
             .invalid-feedback 無效的電子郵件
           .form-group(data-show="signup")
-            label 顯示名稱
+            label 您的稱呼
             input.form-control.form-control-sm(name="displayname",placeholder="例如：王小明")
             .invalid-feedback 不能留白
           .form-group
@@ -53,7 +53,7 @@ mixin authpanel
             .ld.ldld.bare.em-1
           .d-flex.justify-content-between.mt-1
             .small
-              .form-check(data-show="signup")
+              //-.form-check(data-show="signup")
                 input.form-check-input(name="newsletter",type="checkbox")
                 label.form-check-label 訂閱電子報
             .small: a(href="/auth/reset/") 忘記密碼？»

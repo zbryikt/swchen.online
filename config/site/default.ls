@@ -2,7 +2,7 @@
   config = do
     debug: false
     is-production: false
-    domain: \swchen.online
+    domain: \swchen.local
     facebook:
       clientID: \1234
     google:
