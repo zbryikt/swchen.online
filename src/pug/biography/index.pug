@@ -1,0 +1,86 @@
+extends /base.pug
+block vars
+block head
+  +css("/assets/lib/codemirror/5.49.2/lib/codemirror.min.css")
+  +css("/assets/lib/codemirror/5.49.2/theme/ayu-mirage.css")
+  +css("/assets/lib/codemirror/5.49.2/theme/mdn-like.css")
+  style(type="text/css"): :stylus
+    .CodeMirror
+      height: 100%
+      font-size: 15px
+    .timeline
+      margin-left: 0!important
+block body
+  .ldld.full.running.z-fixed
+  .ldcv.ldcvmgr(data-name="disconnected",data-lock="true"): .base.w-480: .inner.card: .card-body.text-center.py-4
+    .py-4
+      h3 編輯器已離線
+      hr
+      p.text-muted.text-left 為了維持線上編輯功能，此編輯器需要保持與主機間的連線。點擊「重新連線」按鈕以繼續使用。
+      .pt-4: .btn.btn-outline-primary.ld.ld-ext-right(ld="reconnect")
+        span 重新連線
+        .ld.ld-ball.ld-squeeze
+  .d-flex.w-100.h-100
+    .flex-grow-1.w-50(ld="editor")
+    .flex-grow-1.w-50(ld="viewer")
+      .p-4
+        .timeline
+          .list
+            .item(ld-each="timeline-item")
+              .title #[span(ld="year")] / #[span(ld="title")]
+              .content(ld="content")
+
+block script
+  //- #####
+  //- required
+  +script("/assets/lib/sharedb-wrapper/client.bundle.min.js")
+  +script("/assets/lib/codemirror/5.49.2/lib/codemirror.min.js")
+
+  //- syntax highlight
+  //+script("/assets/lib/codemirror/5.49.2/mode/javascript/javascript.js")
+  //+script("/assets/lib/codemirror/5.49.2/mode/css/css.js")
+  //+script("/assets/lib/codemirror/5.49.2/mode/xml/xml.js")
+  +script("/assets/lib/codemirror/5.49.2/mode/htmlmixed/htmlmixed.js")
+  +script("/assets/lib/codemirror/5.49.2/mode/yaml/yaml.js")
+  //+script("/assets/lib/codemirror/5.49.2/mode/livescript/livescript.js")
+  //+script("/assets/lib/codemirror/5.49.2/mode/stylus/stylus.js")
+  //+script("/assets/lib/codemirror/5.49.2/mode/pug/pug.js")
+  +script("/assets/lib/codemirror/5.49.2/mode/markdown/markdown.js")
+
+  //- search + vim mode
+  +script("/assets/lib/codemirror/5.49.2/addon/dialog/dialog.js")
+  +script("/assets/lib/codemirror/5.49.2/addon/search/searchcursor.js")
+  +script("/assets/lib/codemirror/5.49.2/keymap/vim.js")
+
+  //- transpilers
+  //- TODO: better way for retrieving pug and stylus dist files.
+  //+script("https://cdnjs.cloudflare.com/ajax/libs/livescript/1.6.0/livescript-min.js")
+
+  //+script("https://cdnjs.cloudflare.com/ajax/libs/BrowserFS/2.0.0/browserfs.min.js")
+  //- init before loading pug to make it work.
+  //-script: :lsc
+    BrowserFS.install window
+    BrowserFS.configure {fs: \LocalStorage}, -> window.fs = fs = require("fs")
+  //+script("/assets/lib/pug/pug.js")
+  +script("/assets/lib/marked/0.8.0/marked.min.js")
+  //- this simply doesn't work
+  //-+script("https://cdnjs.cloudflare.com/ajax/libs/stylus/0.32.1/stylus.min.js")
+  //- don't remember where this is from... orz
+  //+script("/assets/lib/stylus/stylus.min.js")
+
+  //- renderer
+  +script("/assets/lib/sandbox.js/sandbox.min.js")
+
+  //- for dev
+  //+script("https://cdnjs.cloudflare.com/ajax/libs/BrowserFS/2.0.0/browserfs.min.js")
+  //- #####
+
+  +script("https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.13.1/js-yaml.min.js")
+  +script("/assets/lib/dompurify/2.0.7/purify.min.js")
+  +script("/js/editor/base.js")
+  +script("/js/editor/transpiler.js")
+  +script("/js/editor/editor.js")
+  +script("/js/editor/editlet.js")
+  +script("/js/editor/index.js")
+
+  script: :lsc

@@ -124,7 +124,7 @@ backend = do
 
     session-store = -> @ <<< authio.session
     session-store.prototype = express-session.Store.prototype
-    app.use express-session do
+    app.use session = express-session do
       secret: config.session.secret
       resave: true
       saveUninitialized: true
@@ -137,6 +137,11 @@ backend = do
         domain: ".#{config.domain}"
     app.use passport.initialize!
     app.use passport.session!
+
+    # =========== Sharedb
+    if config.{}sharedb.enabled =>
+      access = ({user, id, data, type}) -> new Promise (res, rej) -> res!
+      @sharedb = {server, sdb, connect, wss} = sharedb-wrapper {app, io: config.io-pg, session, access}
 
     passport.serializeUser (u,done) ->
       authio.user.serialize u .then (v) ->
@@ -286,7 +291,10 @@ backend = do
       watch.on \build, -> custom-builder.build it
       watch.on \unlink, -> custom-builder.unlink it
 
-    server = app.listen config.port, -> console.log "[SERVER] listening on port #{server.address!port}".cyan
+    if config.sharedb.enabled =>
+      server.listen config.port, -> console.log "[SERVER] listening on port #{server.address!port}".cyan
+    else
+      server = app.listen config.port, -> console.log "[SERVER] listening on port #{server.address!port}".cyan
     inited-time = Date.now!
     console.log "[SERVER] Initialization: #{(inited-time - start-time) / 1000}s elapsed.".yellow
     res!
