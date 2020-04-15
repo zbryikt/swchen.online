@@ -309,16 +309,24 @@
       })['catch'](aux.errorHandler(res));
     });
     api.get('/condolence/admin', aux.authorizedApi, function(req, res){
-      var ref$, offset, source, verified;
-      ref$ = req.params, offset = ref$.offset, source = ref$.source, verified = ref$.verified;
-      return io.query("select * from condolence\nwhere source ~ $1 and verified = $2\noffset $3", [source, verified, offset]).then(function(r){
+      var ref$, offset, source, verified, verify;
+      ref$ = req.query, offset = ref$.offset, source = ref$.source, verified = ref$.verified;
+      verify = verified === 'accept'
+        ? "= true"
+        : verified === 'reject' ? "= false" : "is null";
+      return io.query("select * from condolence\nwhere verified " + verify + "\noffset $1 limit 100", [offset]).then(function(r){
         r == null && (r = {});
         return res.send(r.rows || []);
       })['catch'](aux.errorHandler(res));
     });
-    return app.get('/condolence/admin', aux.authorized(function(req, res){
+    app.get('/condolence/admin', aux.authorized(function(req, res){
       return res.render('admin/review.pug');
     }));
+    return api.post('/condolence/:key/verify', aux.authorizedApi, function(req, res){
+      return io.query("update condolence set verified = $1 where key = $2", [req.body.verified, req.params.key]).then(function(){
+        return res.send({});
+      })['catch'](aux.errorHandler(res));
+    });
   });
   function import$(obj, src){
     var own = {}.hasOwnProperty;
