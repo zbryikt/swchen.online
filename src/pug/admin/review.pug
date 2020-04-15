@@ -15,10 +15,11 @@ block body
         .w-100.flex-grow-1.p-2(ld-each="item"): .card.w-100: .card-body
           .d-flex
             .w-75.flex-grow-1
-              div(ld="source") 單位
-              div(ld="content") 留言
-              div(ld="contact") 聯絡方式
-              div(ld="publish") 是否公開
+              .d-flex 單位: #[div(ld="source")]
+              .d-flex 留言: #[div(ld="content")]
+              .d-flex 聯絡方式: #[(ld="contact")]
+              .d-flex 是否公開: #[(ld="publish")]
+              .d-flex 社群連結: #[(ld="social")]
             .w-25.flex-grow-1: img.w-100(ld="image")
           hr
           .btn.btn-outline-dark.mr-2.btn-sm(ld="ok") OK
