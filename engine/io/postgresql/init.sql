@@ -53,6 +53,8 @@ create table if not exists condolence (
   content text not null constraint contentlength check (char_length(content) <= 16384),
   source text not null constraint sourcelength check (char_length(source) <= 200),
   contact text not null constraint contactlength check (char_length(contact) <= 200),
+  social text constraint sociallength check (char_length(social) <= 256),
+  image bool default false,
   publish bool not null default true,
   verified bool not null default false,
   createdtime timestamp default now()

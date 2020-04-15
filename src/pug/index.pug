@@ -11,7 +11,7 @@ block body
         div 台灣人工智慧學校執行長
         h1.display-3(style="font-family:serif;font-weight:900"): b 陳昇瑋博士
         .text-muted 1976 - 2020
-        +scope("hero-view")
+        //-+scope("hero-view")
           each i in [1,2]
             .border.border-secondary.p-4.rounded.shadow-sm.ld.ld-float-ltr-in.mt-4(
             class=(i==1?"d-none":""),ld="condolence",data-id=i,
@@ -44,23 +44,37 @@ block body
   +scope("form").w-100.bg-white
     .w-768.mx-auto.rwd.typeset.heading-contrast.py-4
       h2.mb-4#condolences 線上弔唁
-      .form-group
+      .form-group.mb-4
         .text-lg.mb-2: b 您的弔唁
         textarea.form-control(name="content",rows="5")
 
-      .form-group
+      .d-flex
+        .form-group.mb-4.flex-grow-1
+          .mb-2
+            label.mb-0: b 影像
+            .text-muted 亦可以透過照片、圖片與我們分享
+          .btn.btn-outline-dark.btn-upload.btn-sm 上傳圖片 #[input(name="file",type="file")]
+        img.rounded(ld="img",src="",style="height:5.5em")
+
+      .form-group.mb-4
         .mb-2
           label.mb-0: b 單位 / 姓名
           .text-muted 若有重覆單位或姓名的弔唁，我們僅會留下其中一筆。
         input.form-control(name="source")
 
-      .form-group
+      .form-group.mb-4
         .mb-2
           label.mb-0: b 聯絡方式
           .text-muted 手機、email 等聯絡方式，格式不拘。此資訊僅對家屬公開。
         input.form-control(name="contact")
 
-      .form-group
+      .form-group.mb-4
+        .mb-2
+          label.mb-0: b 社群貼文
+          .text-muted 若您有任何社群網路上關於昇瑋的公開貼文連結，也歡迎您分享於此
+        input.form-control(name="social")
+
+      .form-group.mb-4
         .mb-2
           label.mb-0: b 公開
           .text-muted 若選擇「僅提供給家屬」，則您的弔唁將僅提供給家屬，不會被公開展示；若選擇「公開」，則實體 / 線上追思會以及此網站將會輪播您的弔唁。
@@ -90,13 +104,20 @@ block script
           else Promise.resolve([])
         .then ->
           data = if it => it.0 or null
-          data.publish = if data.publish => \1 else \0
+          if data => data.publish = if data.publish => \1 else \0
+          if data and !data.social => data.social = ''
           form = new ldForm do
             root: "[ld-scope=form]"
             submit: "[ld=submit]"
-            values: data{content, contact, source, publish}
+            values: data{content, social, contact, source, publish} if data
+            verify: (name, value, element) ->
+              if name == \social => return 1
+              else return (if value => 0 else 2)
             afterCheck: (s, f) ->
               s.all = if (<[content source contact]>.reduce(((a, b) -> a and s[b] == 0), true)) => 0 else 2
+              if s.file == 0 =>
+                ldFile.fromFile f.file.files.0, \dataurl
+                  .then -> ld$.find('[ld=img]', 0).setAttribute \src, it.result
           if data => form.checkAll!
           view = new ldView do
             root: "[ld-scope=form]"
@@ -104,8 +125,13 @@ block script
               if node.classList.contains \disabled => return
               payload = form.values!
               loader.on!
+              fd = new FormData!
+              for key in <[content source contact social publish]> => fd.append key, payload[key]
+              f = form.fields.file.files.0
+              console.log f, form.fields.file.files
+              if f => fd.append \file, f
               debounce 1000
-                .then -> ld$.fetch '/d/condolence', {method: \POST}, {json: payload, type: \json}
+                .then -> ld$.fetch '/d/condolence', {method: \POST, body: fd}, {type: \json}
                 .finally -> loader.off!
                 .then -> notify.send \success, "您的弔唁已送出。"
                 .catch -> notify.send \danger, "送出失敗，再試一次？"
@@ -126,6 +152,7 @@ block script
           source: ({node}) ->
             data = lc.[]hero-list[lc.hero-idx or 0] or {}
             node.innerText = data.source
+      /*
       ld$.fetch '/d/condolence', {method: \GET}, {type: \json, params: {offset: 0}}
         .then ->
           lc.hero-list = (lc.hero-list or []) ++ it
@@ -134,5 +161,6 @@ block script
             lc.hero-idx = ((lc.hero-idx or 0) + 1) % ( lc.[]hero-list.length or 1)
             hero-view.render!
           ), 5000
+      */
       smoothScroll!
     ldc.app \main

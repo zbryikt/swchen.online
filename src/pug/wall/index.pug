@@ -12,9 +12,10 @@ html
       body { background: #ccc!important }
   body
     .ldld.full.ld.ld-spinner.running.z-fixed
-    #sample.card.shadow-lg.position-absolute.border-0.d-none(style="width:30%"): .card-body
-      .font-weight-bold.mb-4.text-lg(ld="name")
-      p(ld="description")
+    #sample.card.shadow-lg.position-absolute.border-0.d-none.bg-cover.bg-portrait(style="width:30%")
+      .card-body(style="background:rgba(255,255,255,.5)")
+        .font-weight-bold.mb-4.text-lg(ld="name")
+        p(ld="description")
     #container
     +script("/js/pack/vendor.min.js")
     +script("/js/pack/base.min.js")
@@ -42,6 +43,8 @@ html
             n.style.top = "#{Math.random! * 20 - 10 + pos[lc.pidx][1]}%"
             lc.pidx = (lc.pidx + 1) % pos.length
             n.style.zIndex = (lc.zidx++)
+            if c.image =>
+              n.style.backgroundImage = "url(/assets/uploads/#{c.key}.png)"
             n.classList.remove \d-none
             container.appendChild n
 

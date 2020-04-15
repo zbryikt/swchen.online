@@ -1,4 +1,4 @@
-require! <[fs fs-extra crypto read-chunk sharp]>
+require! <[fs fs-extra path crypto read-chunk sharp express-formidable uploadr]>
 require! <[../aux]>
 (engine,io) <- (->module.exports = it)  _
 
@@ -165,30 +165,43 @@ api.get \/me/condolence, (req, res) ->
     .then (r={}) -> ((res.send r.rows or []).0 or {})
     .catch aux.error-handler res
 
-api.post \/condolence, (req, res) ->
+api.post \/condolence, express-formidable(), (req, res) ->
   try
-    {content, source, contact, publish} = req.body
+    {content, source, contact, publish, social} = req.fields
   catch e
     return aux.r400 res
   if !(content and source and contact and publish) => return aux.r400 res
+  file = (req.files["file"] or {}).path
   publish = (publish == "1")
   (
-    if req.user and req.user.key => io.query "select key from condolence where owner = $1", [req.user.key]
+    if req.user and req.user.key => io.query "select key,image from condolence where owner = $1", [req.user.key]
     else Promise.resolve({rows: []})
   )
     .then (r={}) ->
       if r.rows.length =>
         io.query """
         update condolence
-        set (content,source,contact,publish,verified)
-        = ($2,$3,$4,$5,false) where owner = $1
-        """, [req.user.key, content, source, contact, publish]
+        set (content,source,contact,publish,image,social,verified)
+        = ($2,$3,$4,$5,$6,$7,false) where owner = $1
+        returning key
+        """, [req.user.key, content, source, contact, publish, (r.rows.0.image or !!file), social]
       else
         io.query """
         insert into condolence
-        (owner,content,source,contact,publish,verified)
-        values ($1,$2,$3,$4,$5,false)
-        """, [(if req.user => req.user.key else null), content, source, contact, publish]
+        (owner,content,source,contact,publish,image,social,verified)
+        values ($1,$2,$3,$4,$5,$6,$7,false)
+        returning key
+        """, [(if req.user => req.user.key else null), content, source, contact, publish, !!file, social]
+    .then (r={}) -> 
+      if file and r.[]rows.length =>
+        new Promise (res, rej) ->
+          key = r.rows.0.key
+          root = "static/assets/uploads"
+          (e) <- fs-extra.ensure-dir root, _
+          if e => return rej(e)
+          (e,i) <- sharp(file).resize(800,600,{fit: 'outside'}).toFile path.join(root, "#key.png"), _
+          if e => rej(e) else res!
+      else Promise.resolve!
     .then -> res.send {}
     .catch aux.error-handler res
 
@@ -196,7 +209,9 @@ api.get \/condolence, (req, res) ->
   offset = req.params.offset or 0
   latest = req.params.rev != "false"
   io.query """
-  select * from condolence where publish = true order by createdtime #{if !latest => 'desc' else ''}
+  select * from condolence
+  where verified = true and publish = true
+  order by createdtime #{if !latest => 'desc' else ''}
   offset $1 limit 300
   """, [offset]
     .then (r = {}) -> res.send(r.rows or [])
