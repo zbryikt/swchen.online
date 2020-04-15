@@ -182,14 +182,14 @@ api.post \/condolence, express-formidable(), (req, res) ->
         io.query """
         update condolence
         set (content,source,contact,publish,image,social,verified)
-        = ($2,$3,$4,$5,$6,$7,false) where owner = $1
+        = ($2,$3,$4,$5,$6,$7,null) where owner = $1
         returning key
         """, [req.user.key, content, source, contact, publish, (r.rows.0.image or !!file), social]
       else
         io.query """
         insert into condolence
         (owner,content,source,contact,publish,image,social,verified)
-        values ($1,$2,$3,$4,$5,$6,$7,false)
+        values ($1,$2,$3,$4,$5,$6,$7,null)
         returning key
         """, [(if req.user => req.user.key else null), content, source, contact, publish, !!file, social]
     .then (r={}) -> 

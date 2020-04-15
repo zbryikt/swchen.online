@@ -266,9 +266,9 @@
         })).then(function(r){
         r == null && (r = {});
         if (r.rows.length) {
-          return io.query("update condolence\nset (content,source,contact,publish,image,social,verified)\n= ($2,$3,$4,$5,$6,$7,false) where owner = $1\nreturning key", [req.user.key, content, source, contact, publish, r.rows[0].image || !!file, social]);
+          return io.query("update condolence\nset (content,source,contact,publish,image,social,verified)\n= ($2,$3,$4,$5,$6,$7,null) where owner = $1\nreturning key", [req.user.key, content, source, contact, publish, r.rows[0].image || !!file, social]);
         } else {
-          return io.query("insert into condolence\n(owner,content,source,contact,publish,image,social,verified)\nvalues ($1,$2,$3,$4,$5,$6,$7,false)\nreturning key", [req.user ? req.user.key : null, content, source, contact, publish, !!file, social]);
+          return io.query("insert into condolence\n(owner,content,source,contact,publish,image,social,verified)\nvalues ($1,$2,$3,$4,$5,$6,$7,null)\nreturning key", [req.user ? req.user.key : null, content, source, contact, publish, !!file, social]);
         }
       }).then(function(r){
         r == null && (r = {});
