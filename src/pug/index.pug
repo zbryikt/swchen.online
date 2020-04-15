@@ -184,11 +184,11 @@ block body
 
       .form-group.mb-4
         .mb-2
-          label.mb-0: b 公開
+          label.mb-0: b 公開與否
           .text-muted 若選擇「僅提供給家屬」，則您的弔唁將僅提供給家屬，不會被公開展示；若選擇「公開」，則實體 / 線上追思會以及此網站將會輪播您的弔唁。
         select.form-control(name="publish")
-          option(value="0") 僅提供給家屬
           option(value="1") 於追思會及此網站公開
+          option(value="0") 僅提供給家屬
 
       .d-flex.align-items-center
         .btn.btn-outline-secondary.rounded-pill.px-4.disabled(ld="submit") 送出訊息 #[i.i-check]
