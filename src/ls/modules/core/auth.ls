@@ -202,7 +202,7 @@
         .catch ~>
           hint-fail.cancel!
           loader.cancel!
-          ldcvmgr.toggle("server-down"); console.log it
+          #ldcvmgr.toggle("server-down"); console.log it
 
   auth.fetch {renew: false}
   action = do

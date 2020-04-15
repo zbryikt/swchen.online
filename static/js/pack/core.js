@@ -407,11 +407,9 @@ var slice$ = [].slice;
             console.log(e);
           }
           return ret;
-        })['catch'](function(it){
+        })['catch'](function(){
           hintFail.cancel();
-          loader.cancel();
-          ldcvmgr.toggle("server-down");
-          return console.log(it);
+          return loader.cancel();
         });
       }
     };
