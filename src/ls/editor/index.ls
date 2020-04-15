@@ -1,6 +1,6 @@
 (->
   ldc.register \editor, <[loader]>, ({loader}) ->
-    view = new ldView do
+    /*view2 = new ldView do
       root: document.body
       action: click: do
         reconnect: ({node, evt}) ->
@@ -11,6 +11,7 @@
               lda.ldcvmgr.toggle \disconnected, false
               ldld.off!
             .then -> init!
+    */
 
     lc = {name: 'biography'}
     ldld = new ldLoader root: '.ldld.full'
@@ -49,7 +50,6 @@
             ld$.find(node, '[ld=content]', 0).innerHTML = DOMPurify.sanitize(marked(data.content))
 
     render = debounce ->
-      console.log lc.cur.biography
       lc.parsed-data = ret = jsyaml.load(lc.cur.biography)
       view.render!
       #el.viewer.innerText = lc.cur
