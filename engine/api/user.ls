@@ -194,7 +194,11 @@ api.post \/condolence, (req, res) ->
 
 api.get \/condolence, (req, res) ->
   offset = req.params.offset or 0
-  io.query """ select * from condolence where publish = true offset $1 """, [offset]
+  latest = req.params.rev != "false"
+  io.query """
+  select * from condolence where publish = true order by createdtime #{if !latest => 'desc' else ''}
+  offset $1 limit 300
+  """, [offset]
     .then (r = {}) -> res.send(r.rows or [])
     .catch aux.error-handler res
 
@@ -210,3 +214,4 @@ api.get \/condolence/admin, aux.authorized-api, (req, res) ->
 
 app.get \/condolence/admin, aux.authorized (req, res) ->
   res.render 'admin/review.pug'
+

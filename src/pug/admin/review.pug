@@ -3,4 +3,17 @@ block vars
 block head
 block body
   .w-1024.rwd.mx-auto.typset.heading-contrast
+    +scope("admin").d-flex.flex-wrap
+      .w-50.flex-grow-1.p-2(ld-each="item"): .card.w-100: .card-body
+        div(ld="source") 單位
+        div(ld="content") 留言
+        div(ld="contact") 聯絡方式
+        div(ld="publish") 是否公開
+        hr
+        .btn.btn-outline-dark.mr-2.btn-sm OK
+        .btn.btn-outline-dark.btn-sm NOT OK
+
+  +script("/js/condolence/admin.js")
+
+
 block script

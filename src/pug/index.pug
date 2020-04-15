@@ -15,11 +15,11 @@ block body
           each i in [1,2]
             .border.border-secondary.p-4.rounded.shadow-sm.ld.ld-float-ltr-in.mt-4(
             class=(i==1?"d-none":""),ld="condolence",data-id=i,
-            style="width:90%;max-width:400px;display:inline-block")
+            style="width:90%;max-width:400px;display:inline-block;visibility:hidden")
               .text-lg: b 弔唁
               hr
-              div(ld="content") 始轉單定表看事直多快投中明就大。目健整的都稱步是來兒復卻記景。月務燈史木像兩，學何員式公達來臺仍一手美歷畫國無是修。
-              .mt-3.text-right(ld="source") 中研院資訊所
+              div(ld="content") &nbsp;
+              .mt-3.text-right(ld="source") &nbsp;
 
   .w-768.mx-auto.rwd.typeset.heading-contrast.py-4.border.rounded.shadow.p-4.position-relative.bg-white(style="margin-top:-2em")
     h2 線上告別式資訊
@@ -110,26 +110,29 @@ block script
                 .then -> notify.send \success, "您的弔唁已送出。"
                 .catch -> notify.send \danger, "送出失敗，再試一次？"
 
-      /*hero-view = new ldView do
+      hero-view = new ldView do
         root: "[ld-scope=hero-view]"
+        init-render: false
         handler:
           condolence: ({node}) ->
             data = lc.[]hero-list[lc.hero-idx or 0] or null
             id = +node.getAttribute(\data-id)
+            node.style.visibility = \visible
             node.classList.toggle(\d-none, (id == lc.hero-id) or !data)
           content: ({node}) ->
             data = lc.[]hero-list[lc.hero-idx or 0] or {}
+            console.log data
             node.innerText = data.content
           source: ({node}) ->
             data = lc.[]hero-list[lc.hero-idx or 0] or {}
             node.innerText = data.source
-      */
       ld$.fetch '/d/condolence', {method: \GET}, {type: \json, params: {offset: 0}}
-        .then -> lc.hero-list = (lc.hero-list or []) ++ it
-      /*setInterval (->
-        lc.hero-id = 3 - lc.hero-id
-        lc.hero-idx = ((lc.hero-idx or 0) + 1) % ( lc.[]condolence-list.length or 1)
-        hero-view.render!
-      ), 5000*/
+        .then ->
+          lc.hero-list = (lc.hero-list or []) ++ it
+          setInterval (->
+            lc.hero-id = 3 - lc.hero-id
+            lc.hero-idx = ((lc.hero-idx or 0) + 1) % ( lc.[]hero-list.length or 1)
+            hero-view.render!
+          ), 5000
       smoothScroll!
     ldc.app \main
