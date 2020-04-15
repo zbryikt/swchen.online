@@ -6,12 +6,17 @@ if ctrl.navtop.shown
   class=ctrl.navtop.className,
   data-transition=ctrl.navtop.transition,
   data-transition-target=ctrl.navtop.transitionTarget)
-    ul.navbar-nav.mr-auto
-      li.nav-item: a.nav-link(href="#",data-scrollto="#experience") 生平紀事
-      li.nav-item: a.nav-link(href="#",data-scrollto="#condolences") 對昇瑋說
-      li.nav-item: a.nav-link(href="/wall/") 大家的留言
+    button.navbar-toggler(type="button",data-toggle="collapse",data-target="#nav-top-content"): span.navbar-toggler-icon
+    //-#navbar-more.collapse.navbar-collapse
+      ul.navbar-nav.ml-auto
+        li.nav-item: a.nav-link(href="#",data-scrollto="#biography") 生平紀事
+        li.nav-item: a.nav-link(href="#",data-scrollto="#condolence") 對昇瑋說
+        li.nav-item: a.nav-link(href="/wall/") 大家的留言
     +scope("nav-top")#nav-top-content.collapse.navbar-collapse
       ul.navbar-nav.ml-auto
+        li.nav-item: a.nav-link(href="#",data-scrollto="#biography") 生平紀事
+        li.nav-item: a.nav-link(href="#",data-scrollto="#condolence") 對昇瑋說
+        li.nav-item: a.nav-link(href="/wall/") 大家的留言
         li.nav-item.d-none(ld="signup"): a.nav-link(onclick="lda.auth.show('signup')") 登入
         li.nav-item.dropdown(ld="profile")
           a.nav-link.dropdown-toggle.text-capitalize(ld="displayname",href="#",data-toggle="dropdown"): .avatar

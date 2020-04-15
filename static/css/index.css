@@ -41,6 +41,24 @@ p {
 .btn[ld=submit].disabled + .text-danger {
   display: block;
 }
+.navbar-collapse.collapse.show,
+.navbar-collapse.collapsing {
+  background: #fff;
+  padding: 1em;
+  border-radius: 0.5em;
+  box-shadow: 0 2px 4xp rgba(0,0,0,0.3);
+}
+.herotext {
+  padding-left: 1em !important;
+  padding-top: 1em !important;
+  padding-bottom: 1em !important;
+}
+@media (max-width: 1280px) {
+  .herotext {
+    background: rgba(255,255,255,0.7);
+    border-radius: 0.5em 0 0 0.5em;
+  }
+}
 .authpanel,
 .ldcv > .base > .inner.authpanel {
   background: none;

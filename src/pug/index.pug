@@ -4,23 +4,21 @@ block vars
   - ctrl.navtop.className = "navbar-light";
 block head
 block body
-  .w-100.h-75(style="background:#999 url(/assets/img/hero.jpg) left center no-repeat"): .vertical-center: .text-center.w-100
-    .row.no-gutters
+  //-.w-100.h-75(style="background:#999 url(/assets/img/hero.jpg) left center no-repeat"): .vertical-center: .text-center.w-100
+  .w-100.h-75(style="background:#999 url(/assets/img/hero.jpg) -60px center no-repeat"): .vertical-center: .text-center.w-100
+    .d-block.d-md-none.py-4(style="background:rgba(255,255,255,.3)")
+      div 台灣人工智慧學校執行長
+      div 玉山金控科技長
+      h1.display-4(style="font-family:serif;font-weight:900"): b 陳昇瑋博士
+      .text-muted 1976 - 2020
+
+    .d-none.d-md-block: .row.no-gutters
       .col-md
-      .col-md.text-left
+      .col-md.text-left.herotext
         div 台灣人工智慧學校執行長
         div 玉山金控科技長
         h1.display-3(style="font-family:serif;font-weight:900"): b 陳昇瑋博士
         .text-muted 1976 - 2020
-        //-+scope("hero-view")
-          each i in [1,2]
-            .border.border-secondary.p-4.rounded.shadow-sm.ld.ld-float-ltr-in.mt-4(
-            class=(i==1?"d-none":""),ld="condolence",data-id=i,
-            style="width:90%;max-width:400px;display:inline-block;visibility:hidden")
-              .text-lg: b 弔唁
-              hr
-              div(ld="content") &nbsp;
-              .mt-3.text-right(ld="source") &nbsp;
 
   .w-768.mx-auto.rwd.typeset.heading-contrast.py-4.border.rounded.shadow.p-4.position-relative.bg-white(style="margin-top:-2em")
     h2 線上告別式資訊
@@ -34,7 +32,7 @@ block body
 
   .w-100.bg-white.p-4
     .w-768.mx-auto.rwd.typeset.heading-contrast.py-4
-      h2#experience 陳昇瑋生平
+      h2#biography 陳昇瑋生平
       hr
       p 陳昇瑋博士為台灣人工智慧學校執行長、玉山金控暨玉山銀行科技長兼數位長、財團法人人工智慧科技基金會董事長、財團法人科技生態發展公益基金會執行長，曾任中央研究院資訊科學研究所研究員暨資料洞察實驗室主持人。研究領域為人工智慧、金融科技、多媒體系統、社群網路及計算社會科學等，長年推動人工智慧在製造、金融、零售、服務各產業的深化應用及數位轉型。
 
@@ -153,7 +151,7 @@ block body
 
   +scope("form").w-100.bg-white
     .w-768.mx-auto.rwd.typeset.heading-contrast.py-4
-      h2.mb-4#condolences 想對昇瑋說的話
+      h2.mb-4#condolence 想對昇瑋說的話
       .form-group.mb-4
         .text-lg.mb-2: b 公開內容
         textarea.form-control(name="content",rows="5")
@@ -245,7 +243,7 @@ block script
                 .finally -> loader.off!
                 .then -> notify.send \success, "您的弔唁已送出。"
                 .catch -> notify.send \danger, "送出失敗，再試一次？"
-
+      /*
       hero-view = new ldView do
         root: "[ld-scope=hero-view]"
         init-render: false
@@ -262,6 +260,7 @@ block script
           source: ({node}) ->
             data = lc.[]hero-list[lc.hero-idx or 0] or {}
             node.innerText = data.source
+      */
       /*
       ld$.fetch '/d/condolence', {method: \GET}, {type: \json, params: {offset: 0}}
         .then ->
