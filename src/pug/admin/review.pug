@@ -3,15 +3,26 @@ block vars
 block head
 block body
   .w-1024.rwd.mx-auto.typset.heading-contrast
-    +scope("admin").d-flex.flex-wrap
-      .w-50.flex-grow-1.p-2(ld-each="item"): .card.w-100: .card-body
-        div(ld="source") 單位
-        div(ld="content") 留言
-        div(ld="contact") 聯絡方式
-        div(ld="publish") 是否公開
-        hr
-        .btn.btn-outline-dark.mr-2.btn-sm OK
-        .btn.btn-outline-dark.btn-sm NOT OK
+    +scope("admin")
+      .d-flex.align-items-center.justify-content-center
+        .btn-group.mr-2
+          .btn.btn-outline-dark(ld="accept") 已通過
+          .btn.btn-outline-dark(ld="reject") 不通過
+          .btn.btn-outline-dark(ld="pending") 尚未審
+        div
+          input.form-control(ld="offset",value="0")
+      .d-flex.flex-wrap
+        .w-100.flex-grow-1.p-2(ld-each="item"): .card.w-100: .card-body
+          .d-flex
+            .w-75.flex-grow-1
+              div(ld="source") 單位
+              div(ld="content") 留言
+              div(ld="contact") 聯絡方式
+              div(ld="publish") 是否公開
+            .w-25.flex-grow-1: img.w-100(ld="image")
+          hr
+          .btn.btn-outline-dark.mr-2.btn-sm(ld="ok") OK
+          .btn.btn-outline-dark.btn-sm NOT OK
 
   +script("/js/condolence/admin.js")
 

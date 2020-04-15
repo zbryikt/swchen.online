@@ -218,15 +218,20 @@ api.get \/condolence, (req, res) ->
     .catch aux.error-handler res
 
 api.get \/condolence/admin, aux.authorized-api, (req, res) ->
-  {offset,source,verified} = req.params
+  {offset,source,verified} = req.query
+  verify = if verified == \accept => "= true" else if verified == \reject => "= false" else "is null" 
   io.query """
   select * from condolence
-  where source ~ $1 and verified = $2
-  offset $3
-  """, [source, verified, offset]
+  where verified #{verify}
+  offset $1 limit 100
+  """, [offset]
     .then (r = {}) -> res.send(r.rows or [])
     .catch aux.error-handler res
 
 app.get \/condolence/admin, aux.authorized (req, res) ->
   res.render 'admin/review.pug'
 
+api.post \/condolence/:key/verify, aux.authorized-api, (req, res) ->
+  io.query "update condolence set verified = $1 where key = $2", [req.body.verified, req.params.key]
+    .then -> res.send {}
+    .catch aux.error-handler res

@@ -1,5 +1,16 @@
 (->
   ldc.register \editor, <[loader]>, ({loader}) ->
+    view = new ldView do
+      root: document.body
+      action: click: do
+        reconnect: ({node, evt}) ->
+          ldld.on!
+          sdb.reconnect!
+            .then -> debounce 1000
+            .then ->
+              lda.ldcvmgr.toggle \disconnected, false
+              ldld.off!
+            .then -> init!
 
     lc = {name: 'biography'}
     ldld = new ldLoader root: '.ldld.full'
