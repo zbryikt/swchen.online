@@ -21,7 +21,7 @@ html
     +script("/js/pack/base.min.js")
     script: :lsc
 
-      ldld = new ldLoader root: ".ldld.full"
+      ldld = new ldLoader root: ".ldld.full.ld-spinner"
       lc = {zidx: 1, pidx: 0, cidx: 0, cs: []}
       sample = ld$.find \#sample, 0
       container = ld$.find \#container, 0
@@ -30,10 +30,12 @@ html
       tbr = []
       pos = [[10,10], [60,10], [65,55], [10,55], [25,35], [46,45],[42,10]]
       handler = (t) ->
-        if !cards.length or (t > (cards[* - 1] or {}).time + 2000) =>
+        if lc.cs.length and (!cards.length or (t > (cards[* - 1] or {}).time + 2000)) =>
           cards.push n = sample.cloneNode true
+          n.removeAttribute \id
           c = (lc.cs or [])[lc.cidx]
           lc.cidx = ((lc.cidx or 0) + 1) % ( lc.[]cs.length or 1)
+          if lc.cidx == 0 => condolences.fetch!
           if c => 
             n.time = t
             n.life = 10000 + Math.random! * 10000
@@ -59,12 +61,18 @@ html
         for i from tbr.length - 1 to 0 by -1 =>
           c = tbr[i]
           if c.time + c.life + 1000 > t => continue
-          c.parentNode.removeChild c
+          if c.parentNode => c.parentNode.removeChild c
           tbr.splice i, 1
         requestAnimationFrame (-> handler it)
 
-      ld$.fetch '/d/condolence', {method: \GET}, {type: \json, params: {offset: 0}}
-        .then ->
-          lc.cs = (lc.cs or []) ++ it
-          ldld.off!
-          requestAnimationFrame (-> handler it)
+      condolences = new ldPage do
+        limit: 300
+        host: window
+        fetch: ->
+          ld$.fetch '/d/condolence', {method: \GET}, {type: \json, params: {offset: @offset}}
+            .then (list) ->
+              lc.cs = list ++ (lc.cs or [])
+              lc.cidx = 0
+              return list
+      condolences.fetch!
+      requestAnimationFrame (-> handler it)
