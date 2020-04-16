@@ -1,0 +1,53 @@
+extends /base.pug
+block vars
+  - ctrl.navtop.className = "navbar-light"
+block head
+  style(type="text/css").
+    body { background: #e2e3e4 }
+block body
+  .p-4
+    .row.mx-auto
+      .col-md: div
+      .col-md.d-none.d-md-block: div
+      .col-md.d-none.d-md-block: div
+      .col-md.d-none.d-lg-block: div
+    .text-center: .ldld.ld.ld-spinner.ld-spin(style="font-size:3em")
+
+  #sample.card.shadow-sm.border-0.d-none.bg-cover.bg-portrait.mb-4.ld.ld-float-btt-in(style="width:100%")
+    .card-body(style="background:rgba(255,255,255,.5)")
+      img.w-100.mb-2(src="",ld="img",style="max-height:800px")
+      .font-weight-bold.mb-2.text-lg(ld="name")
+      p(ld="description")
+
+block script
+  script: :lsc
+    sample = ld$.find('#sample', 0)
+    cols = ld$.find('.col-md > div').filter -> getComputedStyle(it).display != \none
+    ldld = new ldLoader root: '.ldld.ld.ld-spinner'
+
+    add = (data, delay) ->
+      idx = cols
+        .map (d,i) -> [i,d.getBoundingClientRect!height]
+        .sort (a,b) -> a.1 - b.1
+        .0.0
+      n = sample.cloneNode true
+      if data.image => ld$.find(n, '[ld=img]', 0).setAttribute \src, "/assets/uploads/#{data.key}.png"
+      else ld$.find(n, '[ld=img]', 0).classList.add \d-none
+      ld$.find(n, '[ld=name]', 0).innerText = data.source
+      ld$.find(n, '[ld=description]', 0).innerText = data.content
+      n.classList.remove \d-none
+      n.style.animationDelay = "#{delay * 0.01}s"
+      cols[idx].appendChild n
+    condolences = new ldPage do
+      host: window
+      fetch-on-scroll: true
+      fetch: ->
+        ldld.on!
+        ld$.fetch '/d/condolence', {method: \GET}, {type: \json, params: {offset: 0}}
+          .then (list) ->
+            list.map (d,i) -> add d, i
+            ldld.off!
+            return list
+    console.log condolences._fetch!
+
+
