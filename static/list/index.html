@@ -36,6 +36,7 @@ add = function(data, delay){
   return cols[idx].appendChild(n);
 };
 condolences = new ldPage({
+  limit: 2,
   host: window,
   fetchOnScroll: true,
   fetch: function(){
@@ -45,7 +46,7 @@ condolences = new ldPage({
     }, {
       type: 'json',
       params: {
-        offset: 0
+        offset: this.offset
       }
     }).then(function(list){
       list.map(function(d, i){
@@ -56,4 +57,4 @@ condolences = new ldPage({
     });
   }
 });
-console.log(condolences._fetch());</script></body></html>
+condolences.fetch();</script></body></html>

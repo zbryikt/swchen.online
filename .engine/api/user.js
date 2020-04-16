@@ -301,8 +301,8 @@
     });
     api.get('/condolence', function(req, res){
       var offset, latest;
-      offset = req.params.offset || 0;
-      latest = req.params.rev !== "false";
+      offset = req.query.offset || 0;
+      latest = req.query.rev !== "false";
       return io.query("select * from condolence\nwhere verified = true and publish = true\norder by createdtime " + (!latest ? 'desc' : '') + "\noffset $1 limit 300", [offset]).then(function(r){
         r == null && (r = {});
         return res.send(r.rows || []);

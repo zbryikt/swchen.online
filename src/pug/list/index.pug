@@ -39,15 +39,16 @@ block script
       n.style.animationDelay = "#{delay * 0.01}s"
       cols[idx].appendChild n
     condolences = new ldPage do
+      limit: 2
       host: window
       fetch-on-scroll: true
       fetch: ->
         ldld.on!
-        ld$.fetch '/d/condolence', {method: \GET}, {type: \json, params: {offset: 0}}
+        ld$.fetch '/d/condolence', {method: \GET}, {type: \json, params: {offset: @offset}}
           .then (list) ->
             list.map (d,i) -> add d, i
             ldld.off!
             return list
-    console.log condolences._fetch!
+    condolences.fetch!
 
 

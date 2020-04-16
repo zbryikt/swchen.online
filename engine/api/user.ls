@@ -206,8 +206,8 @@ api.post \/condolence, express-formidable(), (req, res) ->
     .catch aux.error-handler res
 
 api.get \/condolence, (req, res) ->
-  offset = req.params.offset or 0
-  latest = req.params.rev != "false"
+  offset = req.query.offset or 0
+  latest = req.query.rev != "false"
   io.query """
   select * from condolence
   where verified = true and publish = true
