@@ -15,11 +15,11 @@ block body
         .w-100.flex-grow-1.p-2(ld-each="item"): .card.w-100: .card-body
           .d-flex
             .w-75.flex-grow-1
-              .d-flex.text-nowrap 單位: #[.ml-2(ld="source")]
-              .d-flex.text-nowrap 留言: #[.ml-2(ld="content")]
-              .d-flex.text-nowrap 聯絡方式: #[.ml-2(ld="contact")]
-              .d-flex.text-nowrap 是否公開: #[.ml-2(ld="publish")]
-              .d-flex.text-nowrap 社群連結: #[.ml-2(ld="social")]
+              .d-flex #[span.text-nowrap 單位:] #[.ml-2(ld="source")]
+              .d-flex #[span.text-nowrap 留言:] #[.ml-2(ld="content")]
+              .d-flex #[span.text-nowrap 聯絡方式:] #[.ml-2(ld="contact")]
+              .d-flex #[span.text-nowrap 是否公開:] #[.ml-2(ld="publish")]
+              .d-flex #[span.text-nowrap 社群連結:] #[.ml-2(ld="social")]
             .w-25.flex-grow-1: img.w-100(ld="image")
           hr
           .btn.btn-outline-dark.mr-2.btn-sm(ld="ok") OK
