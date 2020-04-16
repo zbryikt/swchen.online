@@ -26,6 +26,7 @@
               .catch -> notify.send \error, "failed to save"
           handler: ({node,data}) ->
             ld$.find(node, '[ld=source]', 0).innerText = data.source or ''
+            ld$.find(node, '[ld=social]', 0).innerText = data.social or ''
             ld$.find(node, '[ld=content]', 0).innerText = data.content or ''
             ld$.find(node, '[ld=contact]', 0).innerText = data.contact or ''
             ld$.find(node, '[ld=publish]', 0).innerText = data.publish or ''

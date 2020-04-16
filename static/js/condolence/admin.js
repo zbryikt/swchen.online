@@ -68,6 +68,7 @@
             var node, data;
             node = arg$.node, data = arg$.data;
             ld$.find(node, '[ld=source]', 0).innerText = data.source || '';
+            ld$.find(node, '[ld=social]', 0).innerText = data.social || '';
             ld$.find(node, '[ld=content]', 0).innerText = data.content || '';
             ld$.find(node, '[ld=contact]', 0).innerText = data.contact || '';
             ld$.find(node, '[ld=publish]', 0).innerText = data.publish || '';
