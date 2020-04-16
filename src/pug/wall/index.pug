@@ -71,6 +71,8 @@ html
         fetch: ->
           ld$.fetch '/d/condolence', {method: \GET}, {type: \json, params: {offset: @offset}}
             .then (list) ->
+              # toggle off the first load
+              ldld.off!
               lc.cs = list ++ (lc.cs or [])
               lc.cidx = 0
               return list

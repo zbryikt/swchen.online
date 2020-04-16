@@ -92,6 +92,7 @@ condolences = new ldPage({
         offset: this.offset
       }
     }).then(function(list){
+      ldld.off();
       lc.cs = list.concat(lc.cs || []);
       lc.cidx = 0;
       return list;
