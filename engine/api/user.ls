@@ -217,7 +217,7 @@ api.get \/condolence, (req, res) ->
   offset = req.query.offset or 0
   latest = req.query.rev != "false"
   io.query """
-  select * from condolence
+  select key,source,content,image,social,publish,createdtime,verified from condolence
   where verified = true and publish = true
   order by createdtime #{if !latest => 'desc' else ''}
   offset $1 limit 300

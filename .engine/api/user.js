@@ -315,7 +315,7 @@
       var offset, latest;
       offset = req.query.offset || 0;
       latest = req.query.rev !== "false";
-      return io.query("select * from condolence\nwhere verified = true and publish = true\norder by createdtime " + (!latest ? 'desc' : '') + "\noffset $1 limit 300", [offset]).then(function(r){
+      return io.query("select key,source,content,image,social,publish,createdtime,verified from condolence\nwhere verified = true and publish = true\norder by createdtime " + (!latest ? 'desc' : '') + "\noffset $1 limit 300", [offset]).then(function(r){
         r == null && (r = {});
         return res.send(r.rows || []);
       })['catch'](aux.errorHandler(res));
