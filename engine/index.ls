@@ -167,7 +167,6 @@ backend = do
     app.use \/u, throttling.route.user, router.user
 
     router.user
-      /*
       ..post \/signup, throttling.auth.signup, (req, res) ->
         {email,displayname,passwd,config} = req.body{email,displayname,passwd,config}
         if !email or !displayname or passwd.length < 8 => return aux.r400 res
@@ -176,7 +175,6 @@ backend = do
             req.logIn user, -> res.redirect \/u/200; return null
             return null
           .catch -> res.redirect \/u/403; return null
-      */
       ..post \/login, throttling.auth.login, passport.authenticate \local, do
         successRedirect: \/u/200
         failureRedirect: \/u/403
