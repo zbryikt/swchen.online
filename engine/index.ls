@@ -167,6 +167,7 @@ backend = do
     app.use \/u, throttling.route.user, router.user
 
     router.user
+      /*
       ..post \/signup, throttling.auth.signup, (req, res) ->
         {email,displayname,passwd,config} = req.body{email,displayname,passwd,config}
         if !email or !displayname or passwd.length < 8 => return aux.r400 res
@@ -175,6 +176,7 @@ backend = do
             req.logIn user, -> res.redirect \/u/200; return null
             return null
           .catch -> res.redirect \/u/403; return null
+      */
       ..post \/login, throttling.auth.login, passport.authenticate \local, do
         successRedirect: \/u/200
         failureRedirect: \/u/403
@@ -211,6 +213,7 @@ backend = do
       ..post \/logout, (req, res) ->
         req.logout!
         res.redirect \/
+    /*
       ..post \/auth/google, passport.authenticate \google, {scope: ['email']}
       ..get \/auth/google/callback, passport.authenticate \google, do
         successRedirect: \/auth/done/
@@ -219,6 +222,7 @@ backend = do
       ..get \/auth/facebook/callback, passport.authenticate \facebook, do
         successRedirect: \/auth/done/
         failureRedirect: \/auth/failed/social.html
+    */
 
     multi = do
       parser: connect-multiparty limit: config.limit

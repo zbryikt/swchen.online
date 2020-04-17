@@ -233,30 +233,16 @@
         };
         app.use('/u', throttling.route.user, router.user);
         x$ = router.user;
-        x$.post('/signup', throttling.auth.signup, function(req, res){
-          var ref$, email, displayname, passwd, config;
-          ref$ = {
-            email: (ref$ = req.body).email,
-            displayname: ref$.displayname,
-            passwd: ref$.passwd,
-            config: ref$.config
-          }, email = ref$.email, displayname = ref$.displayname, passwd = ref$.passwd, config = ref$.config;
-          if (!email || !displayname || passwd.length < 8) {
-            return aux.r400(res);
-          }
-          return authio.user.create(email, passwd, true, {
-            displayname: displayname
-          }, config || {}).then(function(user){
-            req.logIn(user, function(){
-              res.redirect('/u/200');
-              return null;
-            });
-            return null;
-          })['catch'](function(){
-            res.redirect('/u/403');
-            return null;
-          });
-        });
+        /*
+        ..post \/signup, throttling.auth.signup, (req, res) ->
+          {email,displayname,passwd,config} = req.body{email,displayname,passwd,config}
+          if !email or !displayname or passwd.length < 8 => return aux.r400 res
+          authio.user.create email, passwd, true, {displayname}, (config or {})
+            .then (user) ->
+              req.logIn user, -> res.redirect \/u/200; return null
+              return null
+            .catch -> res.redirect \/u/403; return null
+        */
         x$.post('/login', throttling.auth.login, passport.authenticate('local', {
           successRedirect: '/u/200',
           failureRedirect: '/u/403'
@@ -309,20 +295,16 @@
           req.logout();
           return res.redirect('/');
         });
-        y$.post('/auth/google', passport.authenticate('google', {
-          scope: ['email']
-        }));
-        y$.get('/auth/google/callback', passport.authenticate('google', {
-          successRedirect: '/auth/done/',
-          failureRedirect: '/auth/failed/social.html'
-        }));
-        y$.post('/auth/facebook', passport.authenticate('facebook', {
-          scope: ['email']
-        }));
-        y$.get('/auth/facebook/callback', passport.authenticate('facebook', {
-          successRedirect: '/auth/done/',
-          failureRedirect: '/auth/failed/social.html'
-        }));
+        /*
+          ..post \/auth/google, passport.authenticate \google, {scope: ['email']}
+          ..get \/auth/google/callback, passport.authenticate \google, do
+            successRedirect: \/auth/done/
+            failureRedirect: \/auth/failed/social.html
+          ..post \/auth/facebook, passport.authenticate \facebook, {scope: ['email']}
+          ..get \/auth/facebook/callback, passport.authenticate \facebook, do
+            successRedirect: \/auth/done/
+            failureRedirect: \/auth/failed/social.html
+        */
         multi = {
           parser: connectMultiparty({
             limit: config.limit
