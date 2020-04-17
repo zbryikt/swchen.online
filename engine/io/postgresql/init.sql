@@ -57,5 +57,6 @@ create table if not exists condolence (
   image bool default false,
   publish bool not null default true,
   verified bool not null default false,
+  ip text,
   createdtime timestamp default now()
 );

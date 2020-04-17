@@ -1,6 +1,6 @@
 start-time = Date.now!
 
-require! <[fs fs-extra path crypto LiveScript chokidar moment]>
+require! <[fs fs-extra path crypto LiveScript chokidar moment lderror]>
 require! <[express body-parser express-session connect-multiparty csurf express-rate-limit]>
 require! <[passport passport-local passport-facebook passport-google-oauth20]>
 require! <[nodemailer]>
@@ -261,6 +261,8 @@ backend = do
         # ignore some errors that we don't need to take care.
         if (err instanceof URIError) and "#{err.stack}".startsWith('URIError: Failed to decode param') =>
           return res.status 400 .send!
+        else if (err instanceof lderror) and err.id == 1009 =>
+          return res.status 200 .send!
         else if err.message.startsWith \TokenError =>
           console.error(
             colors.red.underline("[#{moment!format 'YY/MM/DD HH:mm:ss'}]"),

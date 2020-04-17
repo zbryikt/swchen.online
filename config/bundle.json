@@ -13,7 +13,8 @@
       "/js/modules/core/base.js",
       "/js/modules/core/notify.js",
       "/js/modules/core/error.js",
-      "/js/modules/core/navtop.js"
+      "/js/modules/core/navtop.js",
+      "/js/modules/core/recaptcha.js"
     ],
     "vendor": [
       "/assets/lib/bootstrap.native/2.0.27/bootstrap-native-v4.min.js",

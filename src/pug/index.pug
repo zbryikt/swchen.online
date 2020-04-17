@@ -201,7 +201,7 @@ block body
 
 block script
   script: :lsc
-    ldc.register \main, <[ldcvmgr auth loader notify]>, ({ldcvmgr, auth, loader, notify}) ->
+    ldc.register \main, <[ldcvmgr auth loader notify recaptcha]>, ({ldcvmgr, auth, loader, notify, recaptcha}) ->
       lc = {hero-id: 1}
       auth.get!
         .then (authinfo) ->
@@ -235,40 +235,18 @@ block script
               fd = new FormData!
               for key in <[content source contact social publish]> => fd.append key, payload[key]
               f = form.fields.file.files.0
-              console.log f, form.fields.file.files
+              #console.log f, form.fields.file.files
               if f => fd.append \file, f
-              debounce 1000
+
+              recaptcha.get!
+                .then (recaptcha) ->
+                  fd.append \recaptcha, recaptcha
+                  debounce 1000
                 .then -> ld$.fetch '/d/condolence', {method: \POST, body: fd}, {type: \json}
                 .finally -> loader.off!
                 .then -> notify.send \success, "您的弔唁已送出。"
                 .catch -> notify.send \danger, "送出失敗，再試一次？"
-      /*
-      hero-view = new ldView do
-        root: "[ld-scope=hero-view]"
-        init-render: false
-        handler:
-          condolence: ({node}) ->
-            data = lc.[]hero-list[lc.hero-idx or 0] or null
-            id = +node.getAttribute(\data-id)
-            node.style.visibility = \visible
-            node.classList.toggle(\d-none, (id == lc.hero-id) or !data)
-          content: ({node}) ->
-            data = lc.[]hero-list[lc.hero-idx or 0] or {}
-            console.log data
-            node.innerText = data.content
-          source: ({node}) ->
-            data = lc.[]hero-list[lc.hero-idx or 0] or {}
-            node.innerText = data.source
-      */
-      /*
-      ld$.fetch '/d/condolence', {method: \GET}, {type: \json, params: {offset: 0}}
-        .then ->
-          lc.hero-list = (lc.hero-list or []) ++ it
-          setInterval (->
-            lc.hero-id = 3 - lc.hero-id
-            lc.hero-idx = ((lc.hero-idx or 0) + 1) % ( lc.[]hero-list.length or 1)
-            hero-view.render!
-          ), 5000
-      */
+
       smoothScroll!
     ldc.app \main
+  script(src="https://www.google.com/recaptcha/api.js?render=6LcdYOoUAAAAACmrOiNaMvaV2XPVWA1ZuN-x6LvS")

@@ -1,5 +1,5 @@
 require! <[fs fs-extra path crypto read-chunk sharp express-formidable uploadr express-rate-limit]>
-require! <[../aux]>
+require! <[../aux ./util/grecaptcha]>
 (engine,io) <- (->module.exports = it)  _
 
 api = engine.router.api
@@ -178,6 +178,7 @@ api.post \/condolence, thr.base, express-formidable(), (req, res) ->
   catch e
     return aux.r400 res
   if !(content and source and contact and publish) => return aux.r400 res
+  ip = aux.ip(req)
   file = (req.files["file"] or {}).path
   publish = (publish == "1")
   (
@@ -188,17 +189,17 @@ api.post \/condolence, thr.base, express-formidable(), (req, res) ->
       if r.rows.length =>
         io.query """
         update condolence
-        set (content,source,contact,publish,image,social,verified)
-        = ($2,$3,$4,$5,$6,$7,null) where owner = $1
+        set (content,source,contact,publish,image,social,verified,ip)
+        = ($2,$3,$4,$5,$6,$7,null,$8) where owner = $1
         returning key
-        """, [req.user.key, content, source, contact, publish, (r.rows.0.image or !!file), social]
+        """, [req.user.key, content, source, contact, publish, (r.rows.0.image or !!file), social, ip]
       else
         io.query """
         insert into condolence
-        (owner,content,source,contact,publish,image,social,verified)
-        values ($1,$2,$3,$4,$5,$6,$7,null)
+        (owner,content,source,contact,publish,image,social,verified,ip)
+        values ($1,$2,$3,$4,$5,$6,$7,null,$8)
         returning key
-        """, [(if req.user => req.user.key else null), content, source, contact, publish, !!file, social]
+        """, [(if req.user => req.user.key else null), content, source, contact, publish, !!file, social, ip]
     .then (r={}) -> 
       if file and r.[]rows.length =>
         new Promise (res, rej) ->
