@@ -257,7 +257,7 @@
         return (res.send(r.rows) || [])[0] || {};
       })['catch'](aux.errorHandler(res));
     });
-    api.post('/condolence', thr.base, expressFormidable(), function(req, res){
+    api.post('/condolence', thr.base, expressFormidable(), grecaptcha, function(req, res){
       var ref$, content, source, contact, publish, social, e, ip, file;
       try {
         ref$ = req.fields, content = ref$.content, source = ref$.source, contact = ref$.contact, publish = ref$.publish, social = ref$.social;

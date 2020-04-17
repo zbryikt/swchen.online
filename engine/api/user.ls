@@ -172,7 +172,7 @@ api.get \/me/condolence, (req, res) ->
     .then (r={}) -> ((res.send r.rows or []).0 or {})
     .catch aux.error-handler res
 
-api.post \/condolence, thr.base, express-formidable(), (req, res) ->
+api.post \/condolence, thr.base, express-formidable(), grecaptcha, (req, res) ->
   try
     {content, source, contact, publish, social} = req.fields
   catch e
