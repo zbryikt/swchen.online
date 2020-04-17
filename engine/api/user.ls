@@ -1,9 +1,16 @@
-require! <[fs fs-extra path crypto read-chunk sharp express-formidable uploadr]>
+require! <[fs fs-extra path crypto read-chunk sharp express-formidable uploadr express-rate-limit]>
 require! <[../aux]>
 (engine,io) <- (->module.exports = it)  _
 
 api = engine.router.api
 app = engine.app
+
+
+throttling = thr = do
+  base: express-rate-limit do
+    windowMs: 24 * 60 * 60 * 1000
+    max: 5
+    keyGenerator: (req) -> "#{aux.ip(req)}:#{req.baseUrl}#{req.path}"
 
 # - clear cookie -
 # sometimes for some unknown reason, users' cookie might corrupted.
@@ -165,7 +172,7 @@ api.get \/me/condolence, (req, res) ->
     .then (r={}) -> ((res.send r.rows or []).0 or {})
     .catch aux.error-handler res
 
-api.post \/condolence, express-formidable(), (req, res) ->
+api.post \/condolence, thr.base, express-formidable(), (req, res) ->
   try
     {content, source, contact, publish, social} = req.fields
   catch e
