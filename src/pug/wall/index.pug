@@ -11,8 +11,8 @@ html
     style(type="text/css"): :stylus
       body { background: #ccc!important }
   body
-    .ldld.full.ld.ld-spinner.running.z-fixed
-    #sample.card.shadow-lg.position-absolute.border-0.d-none.bg-cover.bg-portrait(style="width:30%")
+    .ldld.full.ld.running.z-fixed
+    #sample.card.shadow-lg.position-absolute.border-0.d-none.bg-cover.bg-portrait(style="width:50%")
       .card-body(style="background:rgba(255,255,255,.5)")
         .font-weight-bold.mb-4.text-lg(ld="name")
         p(ld="description")
@@ -21,7 +21,7 @@ html
     +script("/js/pack/base.min.js")
     script: :lsc
 
-      ldld = new ldLoader root: ".ldld.full.ld-spinner"
+      ldld = new ldLoader root: ".ldld.full.ld"
       lc = {zidx: 1, pidx: 0, cidx: 0, cs: []}
       sample = ld$.find \#sample, 0
       container = ld$.find \#container, 0
@@ -30,15 +30,19 @@ html
       tbr = []
       pos = [[10,10], [60,10], [65,55], [10,55], [25,35], [46,45],[42,10]]
       handler = (t) ->
-        if lc.cs.length and (!cards.length or (t > (cards[* - 1] or {}).time + 2000)) =>
+        if lc.cs.length and (!cards.length or (t > (cards[* - 1] or {}).time + 5000 + Math.random! * 3000)) =>
           cards.push n = sample.cloneNode true
           n.removeAttribute \id
           c = (lc.cs or [])[lc.cidx]
           lc.cidx = ((lc.cidx or 0) + 1) % ( lc.[]cs.length or 1)
           if lc.cidx == 0 => condolences.fetch!
           if c => 
+            n.style.maxWidth = if (c.content or '').length > 400 => '40%' else '25%'
+            n.style.maxHeight = "80%"
+            n.style.overflow = "scroll"
+            n.style.textOverflow = "ellipsis"
             n.time = t
-            n.life = 10000 + Math.random! * 10000
+            n.life = 20000 + Math.random! * 20000
             ld$.find(n, '[ld=name]', 0).innerText = c.source
             ld$.find(n, '[ld=description]', 0).innerText = c.content
             n.classList.add \ld, ani-in
@@ -72,6 +76,12 @@ html
           ld$.fetch '/d/condolence', {method: \GET}, {type: \json, params: {offset: @offset}}
             .then (list) ->
               # toggle off the first load
+              list.map -> it.len = (it.content or '').length
+              list.sort (a,b) ->
+                d = b.len - a.len
+                if d == 0 => return 0
+                if Math.random! > 1 / ( 1 + Math.exp(-d)) => return -1 else return 1
+
               ldld.off!
               lc.cs = list ++ (lc.cs or [])
               lc.cidx = 0
