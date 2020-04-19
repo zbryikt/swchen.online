@@ -12,7 +12,7 @@ html
       body { background: #ccc!important }
   body
     .ldld.full.ld.running.z-fixed
-    #sample.card.shadow-lg.position-absolute.border-0.d-none.bg-cover.bg-portrait(style="width:50%")
+    #sample.card.shadow-lg.position-absolute.border-0.d-none.bg-cover.bg-portrait(style="width:430px;height:300px;max-width:90%;max-height:90%;overflow:scroll")
       .card-body(style="background:rgba(255,255,255,.5)")
         .font-weight-bold.mb-4.text-lg(ld="name")
         p(ld="description")
@@ -33,21 +33,25 @@ html
         if lc.cs.length and (!cards.length or (t > (cards[* - 1] or {}).time + 5000 + Math.random! * 3000)) =>
           cards.push n = sample.cloneNode true
           n.removeAttribute \id
+          [w,h] = [window.innerWidth, window.innerHeight]
           c = (lc.cs or [])[lc.cidx]
           lc.cidx = ((lc.cidx or 0) + 1) % ( lc.[]cs.length or 1)
           if lc.cidx == 0 => condolences.fetch!
           if c => 
-            n.style.maxWidth = if (c.content or '').length > 400 => '40%' else '25%'
-            n.style.maxHeight = "80%"
-            n.style.overflow = "scroll"
-            n.style.textOverflow = "ellipsis"
             n.time = t
-            n.life = 20000 + Math.random! * 20000
+            n.life = 30000 + Math.random! * 30000
             ld$.find(n, '[ld=name]', 0).innerText = c.source
             ld$.find(n, '[ld=description]', 0).innerText = c.content
             n.classList.add \ld, ani-in
-            n.style.left = "#{Math.random! * 20 - 10 + pos[lc.pidx][0]}%"
-            n.style.top = "#{Math.random! * 20 - 10 + pos[lc.pidx][1]}%"
+            box = {width: Math.min(430,w), height: Math.min(300,h)}
+            px = (Math.random! * 20 - 10 + pos[lc.pidx][0]) * w / 100
+            py = (Math.random! * 20 - 10 + pos[lc.pidx][1]) * h / 100
+            if px < 10 => px = 10
+            if py < 10 => py = 10
+            if px + box.width > w - 10 => px = w - box.width - 10
+            if py + box.height > h - 10 => py = h - box.height - 10
+            n.style.left = "#{px}px"
+            n.style.top = "#{py}px"
             lc.pidx = (lc.pidx + 1) % pos.length
             n.style.zIndex = (lc.zidx++)
             if c.image =>
@@ -81,6 +85,7 @@ html
                 d = b.len - a.len
                 if d == 0 => return 0
                 if Math.random! > 1 / ( 1 + Math.exp(-d)) => return -1 else return 1
+              #list.map -> if (it.content or '').length > 200 => it.content = it.content.substring(0,200) + '...'
 
               ldld.off!
               lc.cs = list ++ (lc.cs or [])
