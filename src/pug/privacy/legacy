@@ -1,6 +1,0 @@
-extends /base.pug
-block vars
-block head
-block body
-  .w-768.mx-auto.rwd.typeset.heading-contrast
-    h3 隱私權政策
